@@ -1,0 +1,69 @@
+@keyframes Splash-screen-text {
+    0% {
+        transform: translateY(0%) scale(.8);
+        color: var(--color-text);
+    }
+    75% {
+        transform: scale(.9);
+        color: var(--color-text);
+    }
+    100% {
+        transform: translateY(-190%) scale(1);
+        color: var(--color-primary);
+    }
+}
+
+@keyframes Splash-screen-button {
+    0% {
+        transform: translateX(200%);
+    }
+    50% {
+        transform: translateX(200%);
+    }
+     75% {
+         transform: translateX(170%);
+     }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes Splash-screen-stage {
+
+    0% {
+        transform: translateY(250%);
+        opacity: 0;
+    }
+    85% {
+        transform: translateY(230%);
+    }
+    100% {
+        transform: translateY(20%);
+        opacity: 1;
+    }
+    
+}
+
+
+@keyframes Splash-screen {
+    0% {
+        border: 2px solid var(--color-primary);
+        border-radius: 2rem;
+        overflow: hidden;
+        transform: scale(1);
+    }
+    25% {
+        transform: scale(.9);
+    }
+    100% {
+        transform: translateX(-200%);
+    }
+}
+
+@keyframes openModal {
+    0% {
+        transform: translateY(120%);
+    } 100% {
+        transform: translateY(0);
+    }
+}

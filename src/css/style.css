@@ -1,0 +1,68 @@
+/* ========== Start Main ========== */
+.app-main {
+    width: 100%;
+    max-width: 640px;
+    margin: 0 auto;
+    height: 100dvh;
+}
+/* ========== Start Header ========== */
+#header {
+    width: calc(100% - 56px);
+    margin: 0 auto;
+}
+/* ========== Start Splash screen ========== */
+
+#splash-screen {
+    background-image: url('../assets/images/spashBg.png');
+    background-size: cover;
+}
+#splash-screen h3 {
+    animation: Splash-screen-text 2s forwards;
+}
+#splash-screen .stage {
+    animation: Splash-screen-stage 4s forwards;
+}
+#splash-screen .stage img {
+    mix-blend-mode: multiply;
+    border-radius: 100px;
+}
+#splash-screen .splash-btn {
+    animation: Splash-screen-button 6s forwards;
+}
+.splash-screen-side {
+    animation: Splash-screen 1s ease-in forwards !important;
+}
+
+/* ========== Start Menu & Modal ========== */
+
+.open {
+    animation: openModal .2s forwards;
+}
+
+/* ========== Start Screen ========== */
+.product-card:nth-child(odd) .title {
+    position: absolute;
+    left: 5dvh;
+}
+.product-card:nth-child(even) {
+    direction: ltr;
+}
+.product-card:nth-child(even) .title {
+    position: absolute;
+    right: 5dvh !important;
+}
+/* انیمیشن منو */
+#modal-menu {
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Smooth scroll */
+.overflow-scroll {
+    scroll-behavior: smooth;
+}
+
+#category-screen{
+    background-image: url('../assets/images/cateoryBg.png');
+    background-size: cover;
+    background-position: top left;
+}
