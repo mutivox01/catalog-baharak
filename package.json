@@ -1,0 +1,25 @@
+{
+  "name": "baharak",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/mutivox01/catalog-baharak#readme",
+  "bugs": {
+    "url": "https://github.com/mutivox01/catalog-baharak/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mutivox01/catalog-baharak.git"
+  },
+  "license": "ISC",
+  "author": "mohsen fattahi",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.2",
+    "remixicon": "^4.9.1",
+    "tailwindcss": "^4.3.2"
+  }
+}
