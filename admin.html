@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پنل مدیریت | بهارک آلومنیوم</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    
+    <!-- Remixicon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    
+    <!-- Tailwind -->
+    <link rel="stylesheet" href="dist/output.css">
+
+    
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #DFE5EE;
+        }
+        
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+            z-index: 50;
+        }
+        
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(100%);
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 100vh;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            }
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 60;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .action-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .nav-item {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .nav-item:hover {
+            background-color: #EEF0FF;
+        }
+        
+        .nav-item.active {
+            color: #5B5FEF;
+            background-color: #EEF0FF;
+        }
+        
+        .nav-item.active::before {
+            background-color: #5B5FEF !important;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .product-card-preview {
+            background: linear-gradient(135deg, #F8FAFC 0%, #EEF0FF 100%);
+            border: 2px solid #E8ECF1;
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .product-card-preview:hover {
+            border-color: #5B5FEF;
+            box-shadow: 0 4px 20px rgba(91, 95, 239, 0.15);
+        }
+        
+        .image-upload-area {
+            border: 2px dashed #D5DDE5;
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .image-upload-area:hover {
+            border-color: #5B5FEF;
+            background-color: #EEF0FF;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 1rem;
+        }
+        
+        .spec-row {
+            transition: all 0.2s ease;
+        }
+        
+        .spec-row:hover {
+            background-color: #F8FAFC;
+        }
+
+        /* Dropdown search styles */
+        .search-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.75rem;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 70;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .search-dropdown.show {
+            display: block;
+        }
+        
+        .search-dropdown-item {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .search-dropdown-item:hover {
+            background-color: #EEF0FF;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen">
+
+    <div id="overlay" class="overlay"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-full max-w-[250px] bg-white border-l border-[#dddddd] flex flex-col">
+        <div class="w-full h-20 mb-3 p-3 flex items-center justify-center">
+            <h1 class="font-anton text-2xl text-text">BAHARAK</h1>
+        </div>
+        
+        <nav class="flex-1">
+            <ul class="w-full h-auto flex flex-col gap-2 font-vazirmatn px-3">
+                <li class="nav-item active w-full h-15 flex items-center justify-center gap-6 text-[18px] text-primary relative font-medium before:absolute before:w-1.5 before:h-full before:bg-primary before:rounded-l-full before:right-0" data-section="products">
+                    محصولات
+                    <i class="ri-archive-2-line text-2xl"></i>
+                </li>
+                <li class="nav-item w-full h-15 flex items-center justify-center gap-6 text-[18px] text-text-muted relative font-medium before:absolute before:w-1.5 before:h-full before:bg-transparent before:rounded-l-full before:right-0" data-section="customers">
+                    مشتریان
+                    <i class="ri-group-line text-2xl"></i>
+                </li>
+                <li class="nav-item w-full h-15 flex items-center justify-center gap-6 text-[18px] text-text-muted relative font-medium before:absolute before:w-1.5 before:h-full before:bg-transparent before:rounded-l-full before:right-0" data-section="orders">
+                    سفارشات
+                    <i class="ri-shopping-cart-line text-2xl"></i>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="p-3 border-t border-border mt-auto">
+            <a href="index.html" class="flex items-center gap-2 text-text-muted hover:text-primary transition-colors">
+                <i class="ri-logout-box-line text-xl"></i>
+                <span class="font-vazirmatn">خروج</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-3 md:p-6">
+        <header class="w-full md:w-auto bg-white flex items-center justify-between px-5 py-3 rounded-full border border-border mb-6">
+            <div class="flex items-center gap-4">
+                <button id="menuToggle" class="md:hidden w-10 h-10 rounded-full flex items-center justify-center bg-silver-100">
+                    <i class="ri-menu-line text-2xl text-text"></i>
+                </button>
+                <h2 class="font-vazirmatn text-xl md:text-[28px] font-semibold text-text">مدیریت</h2>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button id="addNewBtn" class="w-10 h-10 md:w-auto md:h-auto md:px-4 md:py-2 rounded-full flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary-hover transition-colors">
+                    <i class="ri-add-line text-xl"></i>
+                    <span class="hidden md:inline font-vazirmatn">افزودن محصول جدید</span>
+                </button>
+                <a href="index.html" class="w-10 h-10 rounded-full flex items-center justify-center bg-border hover:bg-silver-200 transition-colors">
+                    <i class="ri-eye-line text-xl text-gray-700"></i>
+                </a>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-surface rounded-2xl p-4 border border-border">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-text-muted text-sm">کل محصولات</p>
+                        <p id="totalProducts" class="text-2xl font-bold text-text mt-1">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center">
+                        <i class="ri-archive-2-line text-2xl text-primary"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-surface rounded-2xl p-4 border border-border">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-text-muted text-sm">محصولات فعال</p>
+                        <p id="activeProducts" class="text-2xl font-bold text-text mt-1">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-success/10 rounded-full flex items-center justify-center">
+                        <i class="ri-checkbox-circle-line text-2xl text-success"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-surface rounded-2xl p-4 border border-border">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-text-muted text-sm">کل مشتریان</p>
+                        <p id="totalCustomers" class="text-2xl font-bold text-text mt-1">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
+                        <i class="ri-group-line text-2xl text-accent"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-surface rounded-2xl p-4 border border-border">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-text-muted text-sm">سفارشات فعال</p>
+                        <p id="activeOrders" class="text-2xl font-bold text-text mt-1">0</p>
+                    </div>
+                    <div class="w-12 h-12 bg-warning/10 rounded-full flex items-center justify-center">
+                        <i class="ri-shopping-cart-line text-2xl text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="contentArea" class="bg-surface rounded-2xl border border-border p-4 md:p-6"></div>
+    </main>
+
+    <!-- Main Modal -->
+    <div id="modal" class="modal">
+        <div class="bg-surface rounded-2xl p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between mb-6 sticky top-0 bg-surface z-10 pb-4 border-b border-border">
+                <h3 id="modalTitle" class="font-vazirmatn text-xl font-semibold text-text">افزودن</h3>
+                <button id="closeModal" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-silver-100 transition-colors">
+                    <i class="ri-close-line text-xl"></i>
+                </button>
+            </div>
+            
+            <form id="modalForm" class="space-y-6"></form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="bg-surface rounded-2xl p-6 w-full max-w-md mx-4">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="ri-delete-bin-line text-3xl text-error"></i>
+                </div>
+                <h3 class="font-vazirmatn text-xl font-semibold text-text mb-2">تایید حذف</h3>
+                <p class="text-text-muted mb-6">آیا از حذف این آیتم اطمینان دارید؟ این عمل قابل بازگشت نیست.</p>
+                <div class="flex gap-3 justify-center">
+                    <button id="cancelDelete" class="px-6 py-2.5 rounded-full border border-border text-text hover:bg-silver-50 transition-colors font-vazirmatn">انصراف</button>
+                    <button id="confirmDelete" class="px-6 py-2.5 rounded-full bg-error text-white hover:bg-red-600 transition-colors font-vazirmatn">حذف</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DATA STORE ====================
+        let products = [
+            { id: 1, name: 'پروفیل آلومینیومی 2020', description: 'پروفیل صنعتی آلومینیوم با کیفیت بالا', image: '', material: 'آلومینیوم 6063', size: '20x20 میلی‌متر', price: 250000, stock: 150, specs: [{ key: 'آلیاژ', value: '6063-T5' }], status: 'active' },
+            { id: 2, name: 'ورق آلومینیوم 2 میل', description: 'ورق آلومینیوم نورد شده با ضخامت 2 میلی‌متر', image: '', material: 'آلومینیوم 1050', size: '1000x2000 میلی‌متر', price: 180000, stock: 80, specs: [{ key: 'آلیاژ', value: '1050-H14' }], status: 'active' },
+            { id: 3, name: 'نبشی آلومینیومی 3 متری', description: 'نبشی آلومینیومی با لبه‌های دقیق', image: '', material: 'آلومینیوم 6061', size: '40x40 میلی‌متر', price: 320000, stock: 45, specs: [{ key: 'آلیاژ', value: '6061-T6' }], status: 'active' },
+            { id: 4, name: 'لوله آلومینیوم 1 اینچ', description: 'لوله بدون درز آلومینیومی', image: '', material: 'آلومینیوم 6063', size: 'قطر 1 اینچ', price: 195000, stock: 0, specs: [], status: 'inactive' }
+        ];
+        
+        let customers = [
+            { id: 1, name: 'شرکت ساختمانی مهر', phone: '021-12345678', email: 'mehr@example.com', orders: 12, status: 'active' },
+            { id: 2, name: 'صنایع فلزی البرز', phone: '021-87654321', email: 'alborz@example.com', orders: 8, status: 'active' },
+            { id: 3, name: 'کارگاه تولیدی امید', phone: '021-11223344', email: 'omid@example.com', orders: 3, status: 'inactive' }
+        ];
+        
+        let orders = [
+            { id: 1, customerId: 1, customer: 'شرکت ساختمانی مهر', productId: 1, product: 'پروفیل آلومینیومی 2020', quantity: 50, pricePerUnit: 250000, total: 12500000, status: 'pending', date: '1402/12/15' },
+            { id: 2, customerId: 2, customer: 'صنایع فلزی البرز', productId: 2, product: 'ورق آلومینیوم 2 میل', quantity: 30, pricePerUnit: 180000, total: 5400000, status: 'completed', date: '1402/12/10' },
+            { id: 3, customerId: 3, customer: 'کارگاه تولیدی امید', productId: 3, product: 'نبشی آلومینیومی 3 متری', quantity: 20, pricePerUnit: 320000, total: 6400000, status: 'processing', date: '1402/12/05' }
+        ];
+        
+        let currentSection = 'products';
+        let editingId = null;
+        let deleteTarget = null;
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            renderContent('products');
+            updateStats();
+            setupEventListeners();
+        });
+        
+        function setupEventListeners() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    switchSection(this.dataset.section);
+                });
+            });
+            
+            document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+            document.getElementById('overlay').addEventListener('click', closeSidebar);
+            document.getElementById('addNewBtn').addEventListener('click', () => openModal(currentSection, null));
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+            document.getElementById('cancelDelete').addEventListener('click', closeDeleteModal);
+            document.getElementById('confirmDelete').addEventListener('click', confirmDelete);
+            document.getElementById('deleteModal').addEventListener('click', function(e) { if (e.target === this) closeDeleteModal(); });
+            document.getElementById('modalForm').addEventListener('submit', handleFormSubmit);
+        }
+        
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+        
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        }
+        
+        function switchSection(section) {
+            currentSection = section;
+            
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                item.classList.add('text-text-muted');
+            });
+            
+            const activeItem = document.querySelector(`[data-section="${section}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+                activeItem.classList.remove('text-text-muted');
+            }
+            
+            const btnText = document.getElementById('addNewBtn').querySelector('span');
+            const texts = { products: 'افزودن محصول جدید', customers: 'افزودن مشتری جدید', orders: 'افزودن سفارش جدید' };
+            btnText.textContent = texts[section] || 'افزودن جدید';
+            
+            renderContent(section);
+            closeSidebar();
+        }
+        
+        function renderContent(section) {
+            const contentArea = document.getElementById('contentArea');
+            const renderers = {
+                products: renderProductsGrid,
+                customers: renderCustomersTable,
+                orders: renderOrdersTable
+            };
+            contentArea.innerHTML = (renderers[section] || (() => ''))();
+        }
+
+        // ==================== RENDER FUNCTIONS ====================
+        function renderProductsGrid() {
+            if (products.length === 0) {
+                return `<div class="text-center py-12"><i class="ri-inbox-line text-6xl text-silver-300 mb-4"></i><p class="text-text-muted font-vazirmatn text-lg">هیچ محصولی یافت نشد</p><button onclick="openModal('products')" class="mt-4 px-6 py-2 bg-primary text-white rounded-full font-vazirmatn hover:bg-primary-hover transition-colors">افزودن اولین محصول</button></div>`;
+            }
+            
+            let html = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
+            
+            products.forEach(product => {
+                const priceFormatted = product.price.toLocaleString('fa-IR');
+                const hasImage = product.image && product.image.trim() !== '';
+                const stockStatus = product.stock > 0 ? `<span class="text-success text-sm">موجودی: ${product.stock} عدد</span>` : '<span class="text-error text-sm">ناموجود</span>';
+                
+                html += `
+                    <div class="product-card-preview p-4">
+                        <div class="w-full h-48 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden mb-3">
+                            ${hasImage ? `<img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">` : `<i class="ri-image-line text-5xl text-silver-300"></i>`}
+                        </div>
+                        <div class="space-y-2">
+                            <h3 class="font-vazirmatn font-bold text-text text-lg">${product.name}</h3>
+                            <p class="font-vazirmatn text-sm text-text-muted line-clamp-2">${product.description}</p>
+                            <div class="grid grid-cols-2 gap-2 text-sm pt-2 border-t border-silver-100">
+                                <div><span class="text-text-muted">جنس:</span><span class="font-medium text-text mr-1">${product.material}</span></div>
+                                <div><span class="text-text-muted">ابعاد:</span><span class="font-medium text-text mr-1">${product.size}</span></div>
+                            </div>
+                            ${product.specs && product.specs.length > 0 ? `
+                                <div class="pt-2 border-t border-silver-100">
+                                    ${product.specs.slice(0, 2).map(spec => `<span class="inline-block bg-silver-50 text-xs px-2 py-1 rounded-full ml-1 mb-1">${spec.key}: ${spec.value}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                            <div class="flex items-center justify-between pt-2 border-t border-silver-100">
+                                <span class="font-vazirmatn text-lg font-extrabold text-primary">${priceFormatted} تومان</span>
+                                ${stockStatus}
+                            </div>
+                            <div class="flex gap-2 pt-3 border-t border-silver-100">
+                                <button onclick="editItem('products', ${product.id})" class="flex-1 py-2 rounded-lg bg-primary-light text-primary font-vazirmatn text-sm hover:bg-primary/10 transition-colors flex items-center justify-center gap-1"><i class="ri-edit-line"></i>ویرایش</button>
+                                <button onclick="deleteItem('products', ${product.id})" class="flex-1 py-2 rounded-lg bg-error/10 text-error font-vazirmatn text-sm hover:bg-error/20 transition-colors flex items-center justify-center gap-1"><i class="ri-delete-bin-line"></i>حذف</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            return html;
+        }
+        
+        function renderCustomersTable() {
+            if (customers.length === 0) {
+                return `<div class="text-center py-12"><i class="ri-user-line text-6xl text-silver-300 mb-4"></i><p class="text-text-muted font-vazirmatn text-lg">هیچ مشتری‌ای یافت نشد</p></div>`;
+            }
+            
+            let html = `<div class="overflow-x-auto"><table class="w-full font-vazirmatn"><thead><tr class="border-b border-border">
+                <th class="text-right py-3 px-4 text-text-muted font-medium">#</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium">نام مشتری</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium hidden md:table-cell">تلفن</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium hidden lg:table-cell">ایمیل</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium">سفارشات</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium hidden sm:table-cell">وضعیت</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium">عملیات</th>
+            </tr></thead><tbody>`;
+            
+            customers.forEach(customer => {
+                html += `<tr class="border-b border-border hover:bg-silver-50 transition-colors">
+                    <td class="py-3 px-4">${customer.id}</td>
+                    <td class="py-3 px-4 font-medium">${customer.name}</td>
+                    <td class="py-3 px-4 text-text-muted hidden md:table-cell">${customer.phone}</td>
+                    <td class="py-3 px-4 text-text-muted hidden lg:table-cell">${customer.email}</td>
+                    <td class="py-3 px-4">${customer.orders} سفارش</td>
+                    <td class="py-3 px-4 hidden sm:table-cell"><span class="status-badge ${customer.status === 'active' ? 'bg-success/10 text-success' : 'bg-error/10 text-error'}">${customer.status === 'active' ? 'فعال' : 'غیرفعال'}</span></td>
+                    <td class="py-3 px-4"><div class="flex gap-2">
+                        <button onclick="editItem('customers', ${customer.id})" class="action-btn w-8 h-8 rounded-full bg-primary-light flex items-center justify-center"><i class="ri-edit-line text-primary"></i></button>
+                        <button onclick="deleteItem('customers', ${customer.id})" class="action-btn w-8 h-8 rounded-full bg-error/10 flex items-center justify-center"><i class="ri-delete-bin-line text-error"></i></button>
+                    </div></td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            return html;
+        }
+        
+        function renderOrdersTable() {
+            if (orders.length === 0) {
+                return `<div class="text-center py-12"><i class="ri-shopping-cart-line text-6xl text-silver-300 mb-4"></i><p class="text-text-muted font-vazirmatn text-lg">هیچ سفارشی یافت نشد</p></div>`;
+            }
+            
+            const statusMap = {
+                'pending': { text: 'در انتظار', class: 'bg-warning/10 text-warning' },
+                'processing': { text: 'در حال پردازش', class: 'bg-accent/10 text-accent' },
+                'completed': { text: 'تکمیل شده', class: 'bg-success/10 text-success' },
+                'cancelled': { text: 'لغو شده', class: 'bg-error/10 text-error' }
+            };
+            
+            let html = `<div class="overflow-x-auto"><table class="w-full font-vazirmatn"><thead><tr class="border-b border-border">
+                <th class="text-right py-3 px-4 text-text-muted font-medium">#</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium">مشتری</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium hidden md:table-cell">محصول</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium">تعداد</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium hidden sm:table-cell">مبلغ واحد</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium hidden sm:table-cell">مبلغ کل</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium">وضعیت</th>
+                <th class="text-right py-3 px-4 text-text-muted font-medium">عملیات</th>
+            </tr></thead><tbody>`;
+            
+            orders.forEach(order => {
+                const status = statusMap[order.status] || statusMap['pending'];
+                html += `<tr class="border-b border-border hover:bg-silver-50 transition-colors">
+                    <td class="py-3 px-4">${order.id}</td>
+                    <td class="py-3 px-4 font-medium">${order.customer}</td>
+                    <td class="py-3 px-4 text-text-muted hidden md:table-cell">${order.product}</td>
+                    <td class="py-3 px-4">${order.quantity} عدد</td>
+                    <td class="py-3 px-4 hidden sm:table-cell">${order.pricePerUnit.toLocaleString('fa-IR')} تومان</td>
+                    <td class="py-3 px-4 hidden sm:table-cell font-bold">${order.total.toLocaleString('fa-IR')} تومان</td>
+                    <td class="py-3 px-4"><span class="status-badge ${status.class}">${status.text}</span></td>
+                    <td class="py-3 px-4"><div class="flex gap-2">
+                        <button onclick="editItem('orders', ${order.id})" class="action-btn w-8 h-8 rounded-full bg-primary-light flex items-center justify-center"><i class="ri-edit-line text-primary"></i></button>
+                        <button onclick="deleteItem('orders', ${order.id})" class="action-btn w-8 h-8 rounded-full bg-error/10 flex items-center justify-center"><i class="ri-delete-bin-line text-error"></i></button>
+                    </div></td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table></div>';
+            return html;
+        }
+
+        // ==================== MODAL & FORM HANDLING ====================
+        function openModal(section, id = null) {
+            editingId = id;
+            currentSection = section; // Ensure currentSection is set correctly
+            
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalForm = document.getElementById('modalForm');
+            
+            let formHTML = '';
+            
+            switch(section) {
+                case 'products':
+                    modalTitle.textContent = id ? 'ویرایش محصول' : 'افزودن محصول جدید';
+                    formHTML = getProductFormHTML();
+                    break;
+                case 'customers':
+                    modalTitle.textContent = id ? 'ویرایش مشتری' : 'افزودن مشتری جدید';
+                    formHTML = getCustomerFormHTML();
+                    break;
+                case 'orders':
+                    modalTitle.textContent = id ? 'ویرایش سفارش' : 'ثبت سفارش جدید';
+                    formHTML = getOrderFormHTML();
+                    break;
+            }
+            
+            modalForm.innerHTML = formHTML;
+            modal.classList.add('active');
+            
+            // Setup dynamic listeners after form is rendered
+            setTimeout(() => setupFormListeners(section, id), 100);
+        }
+        
+        function setupFormListeners(section, id) {
+            if (section === 'products') {
+                const imageInput = document.getElementById('imageInput');
+                if (imageInput) {
+                    imageInput.addEventListener('change', handleImageUpload);
+                }
+                
+                if (id) {
+                    fillProductForm(id);
+                }
+            }
+            
+            if (section === 'orders') {
+                setupCustomerSearch();
+                setupProductSelect();
+                
+                if (id) {
+                    fillOrderForm(id);
+                }
+            }
+            
+            if (section === 'customers' && id) {
+                fillCustomerForm(id);
+            }
+        }
+        
+        function getProductFormHTML() {
+            return `
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">نام محصول *</label>
+                    <input type="text" name="name" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="مثال: پروفیل آلومینیومی 2020">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">توضیحات محصول *</label>
+                    <textarea name="description" rows="3" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="توضیحات کامل محصول را وارد کنید..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">تصویر محصول</label>
+                    <div id="imageUploadArea" class="image-upload-area p-6 text-center">
+                        <input type="file" name="image" accept="image/*" id="imageInput" class="hidden">
+                        <div id="imagePreviewContainer" class="hidden">
+                            <img id="imagePreview" src="" alt="Preview" class="image-preview mx-auto mb-3">
+                            <button type="button" onclick="document.getElementById('imageInput').click()" class="text-sm text-primary hover:text-primary-hover font-vazirmatn"><i class="ri-refresh-line ml-1"></i>تغییر تصویر</button>
+                        </div>
+                        <div id="imagePlaceholder" class="cursor-pointer" onclick="document.getElementById('imageInput').click()">
+                            <i class="ri-image-add-line text-4xl text-silver-400 mb-2"></i>
+                            <p class="text-sm text-text-muted font-vazirmatn">برای آپلود تصویر کلیک کنید</p>
+                            <p class="text-xs text-silver-400 mt-1">PNG, JPG تا 2MB</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-2">جنس *</label>
+                        <input type="text" name="material" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="مثال: آلومینیوم 6061">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-2">ابعاد / سایز *</label>
+                        <input type="text" name="size" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="مثال: 20x20 میلی‌متر">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-2">قیمت (تومان) *</label>
+                        <input type="number" name="price" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="مثال: 250000">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-2">موجودی (عدد) *</label>
+                        <input type="number" name="stock" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="مثال: 100">
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-sm font-medium text-text">مشخصات فنی</label>
+                        <button type="button" onclick="addSpecRow()" class="text-sm text-primary hover:text-primary-hover font-vazirmatn flex items-center gap-1"><i class="ri-add-line"></i>افزودن مشخصه</button>
+                    </div>
+                    <div id="specsContainer" class="space-y-2"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">وضعیت</label>
+                    <select name="status" class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn">
+                        <option value="active">فعال</option>
+                        <option value="inactive">غیرفعال</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-4 border-t border-border">
+                    <button type="button" onclick="closeModal()" class="flex-1 px-4 py-2.5 rounded-full border border-border text-text hover:bg-silver-50 transition-colors font-vazirmatn">انصراف</button>
+                    <button type="submit" class="flex-1 px-4 py-2.5 rounded-full bg-primary text-white hover:bg-primary-hover transition-colors font-vazirmatn">ذخیره محصول</button>
+                </div>
+            `;
+        }
+        
+        function getCustomerFormHTML() {
+            return `
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">نام مشتری *</label>
+                    <input type="text" name="name" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="نام شرکت یا شخص">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">شماره تماس *</label>
+                    <input type="text" name="phone" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="مثال: 021-12345678">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">ایمیل</label>
+                    <input type="email" name="email" class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="example@domain.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">وضعیت</label>
+                    <select name="status" class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn">
+                        <option value="active">فعال</option>
+                        <option value="inactive">غیرفعال</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-4 border-t border-border">
+                    <button type="button" onclick="closeModal()" class="flex-1 px-4 py-2.5 rounded-full border border-border text-text hover:bg-silver-50 transition-colors font-vazirmatn">انصراف</button>
+                    <button type="submit" class="flex-1 px-4 py-2.5 rounded-full bg-primary text-white hover:bg-primary-hover transition-colors font-vazirmatn">ذخیره مشتری</button>
+                </div>
+            `;
+        }
+        
+        function getOrderFormHTML() {
+            const customerOptions = customers.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            const productOptions = products.map(p => `<option value="${p.id}" data-price="${p.price}" data-stock="${p.stock}">${p.name} (موجودی: ${p.stock})</option>`).join('');
+            
+            return `
+                <div class="relative">
+                    <label class="block text-sm font-medium text-text mb-2">انتخاب مشتری *</label>
+                    <div class="relative">
+                        <input type="text" id="customerSearch" autocomplete="off" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="جستجوی مشتری...">
+                        <input type="hidden" name="customerId" id="customerId">
+                        <div id="customerDropdown" class="search-dropdown"></div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">انتخاب محصول *</label>
+                    <select name="productId" id="productSelect" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn">
+                        <option value="">-- انتخاب محصول --</option>
+                        ${productOptions}
+                    </select>
+                    <div id="productInfo" class="mt-2 text-sm text-text-muted hidden"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-2">تعداد *</label>
+                        <input type="number" name="quantity" id="quantity" required min="1" class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="تعداد">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-2">قیمت واحد (تومان)</label>
+                        <input type="number" name="pricePerUnit" id="pricePerUnit" readonly class="w-full px-4 py-2.5 rounded-xl border border-border bg-silver-50 focus:outline-none transition-all font-vazirmatn">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text mb-2">مبلغ کل (تومان)</label>
+                    <input type="number" name="total" id="totalPrice" readonly class="w-full px-4 py-2.5 rounded-xl border border-border bg-silver-50 font-bold text-primary focus:outline-none transition-all font-vazirmatn">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-2">تاریخ</label>
+                        <input type="text" name="date" required class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn" placeholder="مثال: 1402/12/15">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text mb-2">وضعیت</label>
+                        <select name="status" class="w-full px-4 py-2.5 rounded-xl border border-border focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary-light transition-all font-vazirmatn">
+                            <option value="pending">در انتظار</option>
+                            <option value="processing">در حال پردازش</option>
+                            <option value="completed">تکمیل شده</option>
+                            <option value="cancelled">لغو شده</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-4 border-t border-border">
+                    <button type="button" onclick="closeModal()" class="flex-1 px-4 py-2.5 rounded-full border border-border text-text hover:bg-silver-50 transition-colors font-vazirmatn">انصراف</button>
+                    <button type="submit" class="flex-1 px-4 py-2.5 rounded-full bg-primary text-white hover:bg-primary-hover transition-colors font-vazirmatn">ثبت سفارش</button>
+                </div>
+            `;
+        }
+
+        // ==================== ORDER FORM HELPERS ====================
+        function setupCustomerSearch() {
+            const searchInput = document.getElementById('customerSearch');
+            const dropdown = document.getElementById('customerDropdown');
+            const hiddenInput = document.getElementById('customerId');
+            
+            if (!searchInput || !dropdown) return;
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim().toLowerCase();
+                const filtered = customers.filter(c => c.name.toLowerCase().includes(query));
+                
+                if (filtered.length > 0 && query.length > 0) {
+                    dropdown.innerHTML = filtered.map(c => 
+                        `<div class="search-dropdown-item font-vazirmatn" data-id="${c.id}" data-name="${c.name}">
+                            <span class="font-medium">${c.name}</span>
+                            <span class="text-text-muted text-sm mr-2">${c.phone}</span>
+                        </div>`
+                    ).join('');
+                    dropdown.classList.add('show');
+                    
+                    dropdown.querySelectorAll('.search-dropdown-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            searchInput.value = this.dataset.name;
+                            hiddenInput.value = this.dataset.id;
+                            dropdown.classList.remove('show');
+                        });
+                    });
+                } else {
+                    dropdown.classList.remove('show');
+                }
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#customerSearch') && !e.target.closest('#customerDropdown')) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+        
+        function setupProductSelect() {
+            const productSelect = document.getElementById('productSelect');
+            const priceInput = document.getElementById('pricePerUnit');
+            const quantityInput = document.getElementById('quantity');
+            const totalInput = document.getElementById('totalPrice');
+            const productInfo = document.getElementById('productInfo');
+            
+            if (!productSelect) return;
+            
+            function updatePriceAndTotal() {
+                const selectedOption = productSelect.selectedOptions[0];
+                if (selectedOption && selectedOption.value) {
+                    const price = Number(selectedOption.dataset.price);
+                    const stock = Number(selectedOption.dataset.stock);
+                    priceInput.value = price;
+                    
+                    productInfo.classList.remove('hidden');
+                    productInfo.innerHTML = `<span class="${stock > 0 ? 'text-success' : 'text-error'}">موجودی: ${stock} عدد</span>`;
+                    
+                    if (quantityInput.value) {
+                        totalInput.value = price * Number(quantityInput.value);
+                    }
+                } else {
+                    priceInput.value = '';
+                    totalInput.value = '';
+                    productInfo.classList.add('hidden');
+                }
+            }
+            
+            productSelect.addEventListener('change', updatePriceAndTotal);
+            quantityInput.addEventListener('input', function() {
+                const price = Number(priceInput.value) || 0;
+                totalInput.value = price * (Number(this.value) || 0);
+            });
+        }
+
+        // ==================== FORM FILLING FOR EDIT ====================
+        function fillProductForm(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+            
+            setTimeout(() => {
+                const form = document.getElementById('modalForm');
+                form.querySelector('[name="name"]').value = product.name || '';
+                form.querySelector('[name="description"]').value = product.description || '';
+                form.querySelector('[name="material"]').value = product.material || '';
+                form.querySelector('[name="size"]').value = product.size || '';
+                form.querySelector('[name="price"]').value = product.price || '';
+                form.querySelector('[name="stock"]').value = product.stock || 0;
+                form.querySelector('[name="status"]').value = product.status || 'active';
+                
+                if (product.image) {
+                    document.getElementById('imagePreview').src = product.image;
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                    document.getElementById('imagePlaceholder').classList.add('hidden');
+                }
+                
+                if (product.specs) {
+                    product.specs.forEach(spec => addSpecRow(spec.key, spec.value));
+                }
+            }, 150);
+        }
+        
+        function fillCustomerForm(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+            
+            setTimeout(() => {
+                const form = document.getElementById('modalForm');
+                form.querySelector('[name="name"]').value = customer.name || '';
+                form.querySelector('[name="phone"]').value = customer.phone || '';
+                form.querySelector('[name="email"]').value = customer.email || '';
+                form.querySelector('[name="status"]').value = customer.status || 'active';
+            }, 150);
+        }
+        
+        function fillOrderForm(id) {
+            const order = orders.find(o => o.id === id);
+            if (!order) return;
+            
+            setTimeout(() => {
+                const form = document.getElementById('modalForm');
+                document.getElementById('customerSearch').value = order.customer || '';
+                document.getElementById('customerId').value = order.customerId || '';
+                document.getElementById('productSelect').value = order.productId || '';
+                document.getElementById('pricePerUnit').value = order.pricePerUnit || '';
+                document.getElementById('quantity').value = order.quantity || '';
+                document.getElementById('totalPrice').value = order.total || '';
+                form.querySelector('[name="date"]').value = order.date || '';
+                form.querySelector('[name="status"]').value = order.status || 'pending';
+                
+                // Trigger product info update
+                document.getElementById('productSelect').dispatchEvent(new Event('change'));
+            }, 150);
+        }
+
+        // ==================== FORM SUBMISSION ====================
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            if (currentSection === 'products') {
+                handleProductSubmit(formData);
+            } else if (currentSection === 'customers') {
+                handleCustomerSubmit(formData);
+            } else if (currentSection === 'orders') {
+                handleOrderSubmit(formData);
+            }
+        }
+        
+        function handleProductSubmit(formData) {
+            const specs = [];
+            const specKeys = formData.getAll('specKey');
+            const specValues = formData.getAll('specValue');
+            
+            for (let i = 0; i < specKeys.length; i++) {
+                if (specKeys[i].trim() && specValues[i].trim()) {
+                    specs.push({ key: specKeys[i], value: specValues[i] });
+                }
+            }
+            
+            const productData = {
+                name: formData.get('name'),
+                description: formData.get('description'),
+                material: formData.get('material'),
+                size: formData.get('size'),
+                price: Number(formData.get('price')),
+                stock: Number(formData.get('stock')),
+                specs: specs,
+                status: formData.get('status'),
+                image: ''
+            };
+            
+            const imageFile = document.getElementById('imageInput')?.files[0];
+            
+            function finalizeSave() {
+                if (editingId) {
+                    const index = products.findIndex(p => p.id === editingId);
+                    if (index !== -1) {
+                        if (!imageFile) productData.image = products[index].image;
+                        products[index] = { ...products[index], ...productData };
+                    }
+                } else {
+                    products.push({ id: Date.now(), ...productData });
+                }
+                closeModalAndRefresh('products');
+            }
+            
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    productData.image = event.target.result;
+                    finalizeSave();
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                finalizeSave();
+            }
+        }
+        
+        function handleCustomerSubmit(formData) {
+            const customerData = {
+                name: formData.get('name'),
+                phone: formData.get('phone'),
+                email: formData.get('email') || '',
+                status: formData.get('status'),
+                orders: 0
+            };
+            
+            if (editingId) {
+                const index = customers.findIndex(c => c.id === editingId);
+                if (index !== -1) {
+                    customerData.orders = customers[index].orders;
+                    customers[index] = { ...customers[index], ...customerData };
+                }
+            } else {
+                customers.push({ id: Date.now(), ...customerData });
+            }
+            
+            closeModalAndRefresh('customers');
+        }
+        
+        function handleOrderSubmit(formData) {
+            const customerId = Number(document.getElementById('customerId').value);
+            const customerName = document.getElementById('customerSearch').value;
+            const productId = Number(formData.get('productId'));
+            const productSelect = document.getElementById('productSelect');
+            const productName = productSelect.selectedOptions[0]?.text.split(' (موجودی:')[0] || '';
+            
+            const orderData = {
+                customerId: customerId,
+                customer: customerName,
+                productId: productId,
+                product: productName,
+                quantity: Number(formData.get('quantity')),
+                pricePerUnit: Number(formData.get('pricePerUnit')),
+                total: Number(formData.get('totalPrice')),
+                date: formData.get('date'),
+                status: formData.get('status')
+            };
+            
+            if (editingId) {
+                const index = orders.findIndex(o => o.id === editingId);
+                if (index !== -1) {
+                    orders[index] = { ...orders[index], ...orderData };
+                }
+            } else {
+                orders.push({ id: Date.now(), ...orderData });
+                
+                // Update customer order count
+                const customerIndex = customers.findIndex(c => c.id === customerId);
+                if (customerIndex !== -1) {
+                    customers[customerIndex].orders = (customers[customerIndex].orders || 0) + 1;
+                }
+                
+                // Update product stock
+                const productIndex = products.findIndex(p => p.id === productId);
+                if (productIndex !== -1) {
+                    products[productIndex].stock = Math.max(0, (products[productIndex].stock || 0) - orderData.quantity);
+                }
+            }
+            
+            closeModalAndRefresh('orders');
+        }
+        
+        function closeModalAndRefresh(section) {
+            closeModal();
+            currentSection = section;
+            renderContent(section);
+            updateStats();
+            // Also update sidebar active state
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                item.classList.add('text-text-muted');
+            });
+            const activeItem = document.querySelector(`[data-section="${section}"]`);
+            if (activeItem) {
+                activeItem.classList.add('active');
+                activeItem.classList.remove('text-text-muted');
+            }
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function handleImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('imagePreview').src = event.target.result;
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                    document.getElementById('imagePlaceholder').classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function addSpecRow(key = '', value = '') {
+            const container = document.getElementById('specsContainer');
+            if (!container) return;
+            const row = document.createElement('div');
+            row.className = 'spec-row flex gap-2 items-center';
+            row.innerHTML = `
+                <input type="text" name="specKey" value="${key}" placeholder="عنوان" class="flex-1 px-3 py-2 rounded-lg border border-border focus:outline-none focus:border-primary text-sm font-vazirmatn">
+                <input type="text" name="specValue" value="${value}" placeholder="مقدار" class="flex-1 px-3 py-2 rounded-lg border border-border focus:outline-none focus:border-primary text-sm font-vazirmatn">
+                <button type="button" onclick="this.closest('.spec-row').remove()" class="w-8 h-8 rounded-full bg-error/10 flex items-center justify-center flex-shrink-0 hover:bg-error/20 transition-colors">
+                    <i class="ri-close-line text-error"></i>
+                </button>
+            `;
+            container.appendChild(row);
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            editingId = null;
+        }
+        
+        function editItem(section, id) {
+            openModal(section, id);
+        }
+        
+        function deleteItem(section, id) {
+            currentSection = section;
+            deleteTarget = { section, id };
+            document.getElementById('deleteModal').classList.add('active');
+        }
+        
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            deleteTarget = null;
+        }
+        
+        function confirmDelete() {
+            if (!deleteTarget) return;
+            
+            const { section, id } = deleteTarget;
+            
+            switch(section) {
+                case 'products':
+                    products = products.filter(p => p.id !== id);
+                    break;
+                case 'customers':
+                    customers = customers.filter(c => c.id !== id);
+                    break;
+                case 'orders':
+                    orders = orders.filter(o => o.id !== id);
+                    break;
+            }
+            
+            closeDeleteModal();
+            renderContent(currentSection);
+            updateStats();
+        }
+        
+        function updateStats() {
+            document.getElementById('totalProducts').textContent = products.length;
+            document.getElementById('activeProducts').textContent = products.filter(p => p.status === 'active').length;
+            document.getElementById('totalCustomers').textContent = customers.length;
+            document.getElementById('activeOrders').textContent = orders.filter(o => o.status === 'pending' || o.status === 'processing').length;
+        }
+    </script>
+</body>
+</html>

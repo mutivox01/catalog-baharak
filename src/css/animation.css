@@ -67,3 +67,11 @@
         transform: translateY(0);
     }
 }
+
+@keyframes backInTop {
+    0% {
+        transform: translateY(-150%);
+    } 100% {
+        transform: translateY(0);
+    }
+}

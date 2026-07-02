@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
     <!-- remixicon -->
-    <link rel="stylesheet" href="node_modules/remixicon/fonts/remixicon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+
     <!-- tailwind -->
     <link rel="stylesheet" href="dist/output.css">
     <!-- css files -->
@@ -22,12 +23,20 @@
     <main class="app-main overflow-hidden">
 
         <!-- ===== Header =====  -->
-         <header id="header" class="h-15 hidden fixed top-0 left-0 right-0 ">
-            <div class="w-full h-full flex items-center justify-between">
+         <header id="header" class="h-15  fixed top-0 left-0 right-0 ">
+            <div class="w-full h-full flex items-center justify-between gap-1">
                 
-                <button onclick="toggleMenu()" class="w-12 h-12 rounded-full bg-surface border border-border text-text">
-                    <i class="ri-menu-3-line text-2xl"></i>
-                </button>
+                
+                <div class="h-12 w-auto rounded-full border border-border bg-surface p-1 flex items-center justify-center gap-1">
+                    <button onclick="toggleMenu()" class="w-10 h-10 rounded-full bg-surface  text-text">
+                        <i class="ri-menu-3-line text-2xl"></i>
+                    </button>
+
+                    <a href="admin.html" class="w-10 h-10 flex items-center justify-center rounded-full bg-surface text-text">
+                        <i class="ri-user-line text-2xl"></i>
+                    </a>
+
+                </div>
 
                 <div class="w-3/4 h-12 rounded-full border bg-surface border-border flex items-center justify-between pl-1">
                     <div class="h-full flex items-center justify-start px-1 gap-2">
@@ -52,7 +61,7 @@
 
         <!-- ===== Splash screen =====  -->
 
-        <section id="splash-screen" class="screen w-full h-screen  ">
+        <section id="splash-screen" class="screen w-full h-screen  hidden">
             <div class="w-full h-full flex items-center justify-center flex-col bg-transparent relative">
 
                 <h3 class="flex flex-col text-4xl font-anton gap-3 text-alu-deep">
@@ -67,7 +76,7 @@
                     <img src="src/assets/images/spash-intro.png" class="absolute top-20" alt="">
                 </div>
                 
-                <button class="splash-btn w-11 h-11 bg-linear-to-b from-primary/60 to-primary  rounded-full absolute right-6 bottom-7 flex items-center justify-center">
+                <button class="splash-btn w-11 h-11 bg-linear-to-b from-primary/60 to-primary  rounded-full absolute right-7 bottom-10 flex items-center justify-center">
                     <i class="ri-arrow-left-s-line text-xl text-silver-50"></i>
                 </button>
 
@@ -75,7 +84,7 @@
         </section>
 
         <!-- ===== Screen category =====  -->
-        <section id="category-screen" class="screen w-full h-screen pt-17 hidden">
+        <section id="category-screen" class="screen w-full h-screen hidden pt-17">
             <!-- محتوای این بخش توسط JavaScript پر می‌شود -->
         </section>
 
@@ -96,6 +105,5 @@
 
 <!-- script -->
 <script src="src/js/script.js"></script>
-<script src="src/js/main.js"></script>
 </body>
 </html>
